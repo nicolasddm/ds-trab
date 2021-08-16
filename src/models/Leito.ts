@@ -4,34 +4,41 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
+    OneToOne,
+    JoinColumn
 } from 'typeorm';
+import Pacient from './Pacient';
   
 
-@Entity('pacients')
-class Pacient {
+@Entity('leitos')
+class Leito {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  cpf: string;
-
-  @Column()
-  nome: string;
-
-  @Column()
-  idade: string;
-
-  @Column()
-  setor: string;
+  @OneToOne(() => Pacient)
+  @JoinColumn({ name: 'pacient_id' })
+  paciente: Pacient;
 
   @Column()
   unidade: string;
 
   @Column()
-  codigoCid: string;
+  andar: string;
 
   @Column()
-  origem: string;
+  setor: string;
+
+  @Column()
+  ala: string;
+
+  @Column()
+  covid_19: string;
+
+  @Column()
+  tipo_estadia: string;
+
+  @Column()
+  tipo_leito: string;
 
   @CreateDateColumn()
   created_at: Date;
@@ -41,4 +48,4 @@ class Pacient {
 
 }
 
-export default Pacient;
+export default Leito;

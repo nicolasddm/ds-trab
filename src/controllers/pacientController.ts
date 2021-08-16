@@ -20,6 +20,14 @@ class PacientController {
 
         return response.json(pacients);
     }
+
+    public async create(request: Request, response: Response): Promise<Response> {
+        const pacient = container.resolve(PacientService);
+        
+        const newPacient = await pacient.createNewPacient(request.body);
+
+        return response.json(newPacient);
+    }
 }
 
 export default PacientController;

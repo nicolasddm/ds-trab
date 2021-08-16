@@ -1,22 +1,34 @@
 import IPacientsRepository from 'repositories/IPacientsRepository';
 import Pacient from '../../models/Pacient';
-import { EntityRepository } from 'typeorm';
+import CreatePacientDTO from '../../models/CreatePacientDTO';
+
+import { EntityRepository, Repository, getRepository } from 'typeorm';
 
 @EntityRepository(Pacient)
 class PacientsRepository implements IPacientsRepository {
-    // private pacients: Pacient[] = [];
-    private pacients = [{ cpf: '1111', nome: 'LinkForce'}, { cpf: '2222', nome: 'LucasBlock'}, { cpf: '3333', nome: 'NicolasDeMarco'}]
-  
+    private ormRepository: Repository<Pacient>;
+
+    constructor() {
+      this.ormRepository = getRepository(Pacient);
+    }
     public async findByCPF(cpf: string): Promise<Pacient | undefined> {
-      const findPacient = this.pacients.find(pacient => pacient.cpf === cpf);
+      const findPacient = await this.ormRepository.findOne({ where: { cpf }});
   
       return findPacient;
     }
 
-    public async findAll(): Promise<Pacient[] | undefined> {
-      const allPacients = this.pacients;
+    public async findAllPacients(): Promise<Pacient[]> {
+      const allPacients = await this.ormRepository.find();
   
       return allPacients;
+    }
+    
+    public async createPacient(pacient: CreatePacientDTO): Promise<Pacient> {
+      const newPacient = this.ormRepository.create(pacient);
+
+      await this.ormRepository.save(newPacient);
+      
+      return newPacient;
     }
 }  
 

@@ -1,6 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 
 import IPacientsRepository from 'repositories/IPacientsRepository';
+import CreatePacientDTO from '../models/CreatePacientDTO';
 import Pacient from '../models/Pacient';
 
 @injectable()
@@ -21,9 +22,22 @@ class PacientService {
     }
 
     public async getPacients(): Promise<Pacient[] | undefined> {
-        const pacients = await this.pacientsRepository.findAll();
+        const pacients = await this.pacientsRepository.findAllPacients();
 
         return pacients;
+    }
+
+    public async createNewPacient(data: CreatePacientDTO): Promise<Pacient> {
+        const cpfPacient = data.cpf;
+        const alreadyExistPacient = await this.pacientsRepository.findByCPF(cpfPacient);
+
+        if (alreadyExistPacient) {
+            throw Error('Esse Paciente já está cadastrado');
+        }
+
+        const pacient = await this.pacientsRepository.createPacient(data);
+
+        return pacient;
     }
 }
 
